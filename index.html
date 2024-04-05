@@ -1,32 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Version Redirect</title>
-  <script>
-    function redirectToForm() {
-      // Function to handle redirection
-      let cookieValue = document.cookie.replace(/(?:(?:^|;\s*)formVersion=([^;]*))/.exec("") || ["", ""])[1];
-      if (!cookieValue) {
-        // No cookie found, randomly assign version (A or B) and set cookie
-        let version = Math.random() < 0.5 ? "A" : "B";
-        document.cookie = "formVersion=" + version + "; expires=" + new Date(Date.now() + 86400000).toUTCString() + "; path=/";
-        cookieValue = version;
-      }
-      // Redirect based on cookie value
-      if (cookieValue === "A") {
-        window.location.href = "https://anationary.github.io/pl/slownik-anatomiczny/"; // Replace "url1" with your actual Version A form URL
-      } else if (cookieValue === "B") {
-        window.location.href = "https://markdownguide.offshoot.io/hacks/"; // Replace "url2" with your actual Version B form URL
-      } else {
-        // Handle unexpected cookie value (optional)
-        console.error("Unexpected cookie value:", cookieValue);
-      }
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Forwarding</title>
 </head>
-<body onload="redirectToForm()">
+<body>
+    <script>
+        const url1 = "https://anationary.github.io/pl/slownik-anatomiczny/";  // Replace with your actual URL for Version A
+        const url2 = "https://markdownguide.offshoot.io/hacks/";  // Replace with your actual URL for Version B
 
-  </body>
+        let version = localStorage.getItem("formVersion");
+
+        // Check if 24 hours have passed since last assignment
+        const lastAssigned = localStorage.getItem("lastAssigned");
+        if (!lastAssigned || (Date.now() - lastAssigned) > (24 * 60 * 60 * 1000)) {
+          version = Math.random() < 0.5 ? url1 : url2; // Randomly choose a version
+          localStorage.setItem("formVersion", version);
+          localStorage.setItem("lastAssigned", Date.now());
+        }
+
+        window.location.href = version;  // Redirect to chosen version
+
+        // Display message if redirection didn't happen
+        if (window.location.href === document.location.href) {  // Check if redirection didn't occur
+          document.write("If redirection didn't happen click <a href='javascript:void(0)' onclick='clearStorageAndReload()'>here</a>.");
+        }
+
+        function clearStorageAndReload() {
+          localStorage.removeItem("formVersion");
+          localStorage.removeItem("lastAssigned");
+          window.location.reload();
+        }
+    </script>
+</body>
 </html>
