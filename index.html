@@ -12,9 +12,9 @@
 
         let version = localStorage.getItem("formVersion");
 
-        // Check if 24 hours have passed since last assignment
+        // Check if sometime time (in ms) have passed since last assignment. Currently 30 days.
         const lastAssigned = localStorage.getItem("lastAssigned");
-        if (!lastAssigned || (Date.now() - lastAssigned) > (24 * 60 * 60 * 1000)) {
+        if (!lastAssigned || (Date.now() - lastAssigned) > (30 * 24 * 60 * 60 * 1000)) {
           version = Math.random() < 0.5 ? url1 : url2; // Randomly choose a version
           localStorage.setItem("formVersion", version);
           localStorage.setItem("lastAssigned", Date.now());
